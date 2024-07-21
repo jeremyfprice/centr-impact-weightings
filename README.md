@@ -1,4 +1,4 @@
-# centr-impact-weightings
+# Determining the Weightings for the CEnTR-IMPACT Metrics
 
 Each descriptor is assigned a "value weighting" based on how community engaged scholars rank the descriptor within the possible descriptors of that component. The possible weighting values are on a logarithmic scale between 0.78 and 1.00.
 
