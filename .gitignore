@@ -51,6 +51,7 @@ rsconnect/
 
 # Output Files
 *.pdf
+*.csv
 
 # MacOS
 
