@@ -9,11 +9,13 @@ qualtrics_file <- "https://osf.io/s2ajm/download"
 
 # Match factors with components
 match_frame <- data.frame(
-  component = c(rep("Contexts", 4),
-                rep("Partnership Processes", 4),
-                rep("Interventions and Research", 5),
-                rep("Engaged Learning", 4),
-                rep("Outcomes", 4)),
+  component = c(
+    rep("Contexts", 4),
+    rep("Partnership Processes", 4),
+    rep("Interventions and Research", 5),
+    rep("Engaged Learning", 4),
+    rep("Outcomes", 4)
+  ),
   factor = c(
     "Challenge Origin",
     "Diversity",
@@ -67,21 +69,23 @@ salience_frame <- CalculateSalience(survey_frame,
 
 # Clean up salience data and match with appropriate weightings and components
 salience_frame <- salience_frame %>%
-#  na.omit() %>%
   distinct(descriptor, .keep_all = TRUE) %>%
   rename("salience" = "Salience") %>%
-  mutate(weighting = case_when(salience == 1.00 ~ 1.00,
-                               salience == 0.80 | salience == 0.75 ~ 0.95,
-                               salience == 0.60 | salience == 0.50 ~ 0.90,
-                               salience == 0.40 | salience == 0.25 ~ 0.84,
-                               salience == 0.20 ~ 0.78)) %>%
+  mutate(weighting = case_when(
+    salience == 1.00 ~ 1.00,
+    salience == 0.80 | salience == 0.75 ~ 0.95,
+    salience == 0.60 | salience == 0.50 ~ 0.90,
+    salience == 0.40 | salience == 0.25 ~ 0.84,
+    salience == 0.20 ~ 0.78
+  )) %>%
   full_join(y = match_frame, by = "factor") %>%
   select(c(component, factor, descriptor, salience, weighting)) %>%
-  mutate(component = factor(component, levels = c("Contexts",
-                                                  "Partnership Processes",
-                                                  "Interventions and Research",
-                                                  "Engaged Learning",
-                                                  "Outcomes"
+  mutate(component = factor(component, levels = c(
+    "Contexts",
+    "Partnership Processes",
+    "Interventions and Research",
+    "Engaged Learning",
+    "Outcomes"
   ))) %>%
   group_by(across(c(component, factor))) %>%
   arrange(by = desc(weighting), .by_group = TRUE) %>%
