@@ -42,17 +42,44 @@ match_frame <- data.frame(
 )
 
 # Read and process the survey data set
-survey_frame <- read_csv(qualtrics_file, col_names = TRUE, show_col_types = FALSE) %>%
+survey_frame <- read_csv(
+  qualtrics_file,
+  col_names = TRUE,
+  show_col_types = FALSE
+) %>%
   select(starts_with("Q")) %>%
   filter(!row_number() %in% c(2)) %>%
   t() %>%
   as.data.frame() %>%
-  separate_wider_delim(" - ", names = c("factor", "descriptor"), cols = "V1") %>%
-  mutate(factor = str_replace_all(factor, "Civic Learning.", "Civic Learning:")) %>%
-  mutate(factor = str_replace_all(factor, "Which of the following best describes the nature of the goals achieved in your project?", "Learning Goals: Which of the following best describes the nature of the goals achieved in your project?")) %>%
-  mutate(factor = str_split(factor, ": ", simplify = TRUE)[, 1]) %>%
-  pivot_longer(!c(factor, descriptor), names_to = "participant_id", values_to = "rank") %>%
-  mutate(participant_id = str_remove_all(string = participant_id, pattern = "V")) %>%
+  separate_wider_delim(
+    " - ",
+    names = c("factor", "descriptor"),
+    cols = "V1"
+  ) %>%
+  mutate(factor = str_replace_all(
+    factor,
+    "Civic Learning.",
+    "Civic Learning:"
+  )) %>%
+  mutate(factor = str_replace_all(
+    factor,
+    "Which of the following best describes the nature of the goals achieved in your project?",
+    "Learning Goals: Which of the following best describes the nature of the goals achieved in your project?"
+  )) %>%
+  mutate(factor = str_split(
+    factor,
+    ": ",
+    simplify = TRUE
+  )[, 1]) %>%
+  pivot_longer(
+    !c(factor, descriptor),
+    names_to = "participant_id",
+    values_to = "rank"
+  ) %>%
+  mutate(participant_id = str_remove_all(
+    string = participant_id,
+    pattern = "V"
+  )) %>%
   mutate(participant_id = as.numeric(participant_id) - 1) %>%
   mutate(rank = as.numeric(rank)) %>%
   as.data.frame() %>%
@@ -60,7 +87,8 @@ survey_frame <- read_csv(qualtrics_file, col_names = TRUE, show_col_types = FALS
   arrange(participant_id)
 
 # Calculate the Smith's Salience Score
-salience_frame <- CalculateSalience(survey_frame,
+salience_frame <- CalculateSalience(
+  survey_frame,
   Order = "rank",
   Subj = "participant_id",
   CODE = "descriptor",
